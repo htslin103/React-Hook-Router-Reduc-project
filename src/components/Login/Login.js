@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
+
+//We decided to store this fxn outside of our useReducer 
+const emailReducer = () => {};
 
 const Login = (props) => {
   const [enteredEmail, setEnteredEmail] = useState('');
@@ -10,13 +13,27 @@ const Login = (props) => {
   const [enteredPassword, setEnteredPassword] = useState('');
   const [passwordIsValid, setPasswordIsValid] = useState();
   const [formIsValid, setFormIsValid] = useState(false);
+    
+  const [emailState, dispatchEmail] = useReducer(); 
+  useEffect(() => {
+      console.log('EFFECT RUNNING');
+  }, [enteredPassword]);
+    
+  useEffect(() => {    
+    const indentifier = setTimeout(() => {
+      console.log('Checking Form Validity!');
+      setFormIsValid(enteredEmail.includes('@') && enteredPassword.trim().length > 6);
+  }, 500); //500 tells code to wait before executing the fxn before it  
+
+    return () => {
+      console.log('CLEANUP');
+      clearTimeout(indentifier);
+    };
+  }, [enteredEmail, enteredPassword]);
 
   const emailChangeHandler = (event) => {
     setEnteredEmail(event.target.value);
 
-    setFormIsValid(
-      event.target.value.includes('@') && enteredPassword.trim().length > 6
-    );
   };
 
   const passwordChangeHandler = (event) => {
