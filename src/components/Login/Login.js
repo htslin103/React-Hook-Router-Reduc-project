@@ -17,7 +17,14 @@ const emailReducer = (state, action) => {
 };
 
 const passwordReducer = (state, action) => {
+  if (action.type === 'USER_INPUT'){ //event.target.value.trim().length > 6
+    return {value: action.val, isValid: action.val.trim().length > 6 };
+  }
+  if (action.type === 'INPUT_BLUR'){
 
+    return{ value: state.value, isValid: state.value.trim().length > 6 };
+  }
+  return {value: '', isValid: false}
 }
 
 const Login = (props) => {
@@ -28,35 +35,34 @@ const Login = (props) => {
   const [formIsValid, setFormIsValid] = useState(false);
   /*Here's the syntax just for reference
   const[state,dispatchFn] = useReducer(reducerFn, initialState, initFn);*/
-  const [emailState, dispatchEmail] = useReducer(emailReducer, { value: '', isValid: undefined, }); 
-
-  const [passwordState, dispatchPassword] = useReducer(passwordReducer, { value: '', isValid: undefined, }); 
-
-/*   useEffect(() => {
-  }, [pass]);
+  const [emailState, dispatchEmail] = useReducer(emailReducer, { value: '', isValid: null, }); 
+  const [passwordState, dispatchPassword] = useReducer(passwordReducer, { value: '', isValid: null, }); 
     
+  const {isValid: emailIsValid } = emailState;
+  const {isValid: passwordIsValid } = passwordState;
+
   useEffect(() => {    
     const indentifier = setTimeout(() => {
       console.log('Checking Form Validity!');
-      setFormIsValid(emailState.value.includes('@') && passwordState.trim().length > 6);
+      setFormIsValid(emailState.isValid && passwordState.isValid);
   }, 500); //500 tells code to wait before executing the fxn before it  
 
     return () => {
       clearTimeout(indentifier);
     };
-  }, [emailState, enteredPassword]); */
+  }, [emailState, passwordState]);
 
   const emailChangeHandler = (event) => {
     dispatchEmail({type: 'USER_INPUT', val: event.target.value});
 
-    setFormIsValid(event.target.value.includes('@') && passwordState.trim().length > 6 );
+    // setFormIsValid(event.target.value.includes('@') && passwordState.isValid );
   };
 
   const passwordChangeHandler = (event) => {
     dispatchPassword({type: 'USER_INPUT', val: event.target.value});
 
-    setFormIsValid(
-      emailState.isValid && event.target.value.trim().length > 6 );
+    // setFormIsValid(
+    //   event.target.value.includes('@') && passwordState.trim().length > 6 );
   };
 
   const validateEmailHandler = () => {
@@ -98,7 +104,7 @@ const Login = (props) => {
           <input
             type="password"
             id="password"
-            value={passwordState}
+            value={passwordState.value}
             onChange={passwordChangeHandler}
             onBlur={validatePasswordHandler}
           />
