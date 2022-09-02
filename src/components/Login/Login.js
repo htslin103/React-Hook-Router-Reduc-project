@@ -44,13 +44,13 @@ const Login = (props) => {
   useEffect(() => {    
     const indentifier = setTimeout(() => {
       console.log('Checking Form Validity!');
-      setFormIsValid(emailState.isValid && passwordState.isValid);
+      setFormIsValid(emailIsValid && passwordIsValid);
   }, 500); //500 tells code to wait before executing the fxn before it  
 
     return () => {
       clearTimeout(indentifier);
     };
-  }, [emailState, passwordState]);
+  }, [emailIsValid, passwordIsValid]);
 
   const emailChangeHandler = (event) => {
     dispatchEmail({type: 'USER_INPUT', val: event.target.value});
